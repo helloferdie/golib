@@ -49,7 +49,7 @@ func NullFormat(input interface{}, tz string) interface{} {
 				t, err := time.Parse(time.RFC3339, s)
 				if err == nil {
 					loc, _ := time.LoadLocation(tz)
-					return t.In(loc).Format("2006-01-02T15:04:05-0700")
+					return t.In(loc).Format(time.RFC3339)
 				}
 			}
 		}
