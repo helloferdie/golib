@@ -149,3 +149,38 @@ func (r *Response) ErrorDataNotFound() *Response {
 	r.Error = "common.error.service.data.not_found"
 	return r
 }
+
+// ErrorUpload -
+func (r *Response) ErrorUpload(format map[string]interface{}) *Response {
+	r.Code = 500
+	r.Message = "common.error.upload"
+	return r
+}
+
+// ErrorDownload -
+func (r *Response) ErrorDownload(format map[string]interface{}) *Response {
+	r.Code = 500
+	r.Message = "common.error.download"
+	return r
+}
+
+// ErrorInternal -
+func (r *Response) ErrorInternal() *Response {
+	r.Code = 500
+	r.Message = "common.error.server.internal"
+	return r
+}
+
+// ErrorUnauthorized -
+func (r *Response) ErrorUnauthorized() *Response {
+	r.Code = 401
+	r.Message = "common.error.request.unauthorized"
+	return r
+}
+
+// ErrorForbidden -
+func (r *Response) ErrorForbidden() *Response {
+	r.Code = 403
+	r.Message = "common.error.request.forbidden"
+	return r
+}
