@@ -118,34 +118,39 @@ func (r *Response) ErrorValidation() *Response {
 // ErrorList -
 func (r *Response) ErrorList() *Response {
 	r.Code = 500
-	r.Message = "common.error.service.list"
+	r.Message = "common.error.server.internal"
+	r.Error = "common.error.service.list"
 	return r
 }
 
 // ErrorCreate -
 func (r *Response) ErrorCreate() *Response {
 	r.Code = 500
-	r.Message = "common.error.service.create"
+	r.Message = "common.error.server.internal"
+	r.Error = "common.error.service.create"
 	return r
 }
 
 // ErrorUpdate -
 func (r *Response) ErrorUpdate() *Response {
 	r.Code = 500
-	r.Message = "common.error.service.update"
+	r.Message = "common.error.server.internal"
+	r.Error = "common.error.service.update"
 	return r
 }
 
 // ErrorDelete -
 func (r *Response) ErrorDelete() *Response {
 	r.Code = 500
-	r.Message = "common.error.service.delete"
+	r.Message = "common.error.server.internal"
+	r.Error = "common.error.service.delete"
 	return r
 }
 
 // ErrorDataNotFound -
 func (r *Response) ErrorDataNotFound() *Response {
 	r.Code = 404
+	r.Message = "common.error.request.default"
 	r.Error = "common.error.service.data.not_found"
 	return r
 }
@@ -153,14 +158,16 @@ func (r *Response) ErrorDataNotFound() *Response {
 // ErrorUpload -
 func (r *Response) ErrorUpload(format map[string]interface{}) *Response {
 	r.Code = 500
-	r.Message = "common.error.upload"
+	r.Message = "common.error.server.internal"
+	r.Error = "common.error.service.upload"
 	return r
 }
 
 // ErrorDownload -
 func (r *Response) ErrorDownload(format map[string]interface{}) *Response {
 	r.Code = 500
-	r.Message = "common.error.download"
+	r.Message = "common.error.server.internal"
+	r.Error = "common.error.service.download"
 	return r
 }
 
@@ -168,19 +175,22 @@ func (r *Response) ErrorDownload(format map[string]interface{}) *Response {
 func (r *Response) ErrorInternal() *Response {
 	r.Code = 500
 	r.Message = "common.error.server.internal"
+	r.Error = r.Message
 	return r
 }
 
 // ErrorUnauthorized -
 func (r *Response) ErrorUnauthorized() *Response {
 	r.Code = 401
-	r.Message = "common.error.request.unauthorized"
+	r.Message = "common.error.request.default"
+	r.Error = "common.error.request.unauthorized"
 	return r
 }
 
 // ErrorForbidden -
 func (r *Response) ErrorForbidden() *Response {
 	r.Code = 403
-	r.Message = "common.error.request.forbidden"
+	r.Message = "common.error.request.default"
+	r.Error = "common.error.request.forbidden"
 	return r
 }

@@ -66,23 +66,23 @@ func Logger(next echo.HandlerFunc) echo.HandlerFunc {
 
 // ErrorHandler - Custom error handler
 func ErrorHandler(err error, c echo.Context) {
-	resp := libresponse.GetDefault()
+	response := libresponse.GetDefault()
 	report, ok := err.(*echo.HTTPError)
 	if !ok {
 		report = echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	resp.Code = report.Code
-	switch resp.Code {
+	response.Code = report.Code
+	switch response.Code {
 	case 400:
-		resp.Message = "common.error.request.default"
+		response.Message = "common.error.request.default"
 		reportMsg := report.Message.(string)
 		if reportMsg == "missing or malformed jwt" {
-			resp.Error = "common.error.request.jwt.required"
+			response.Error = "common.error.request.jwt.required"
 		} else {
 			if e1, ok := report.Internal.(*json.UnmarshalTypeError); ok {
-				resp.Error = "common.error.request.unmarshal_var"
-				resp.ErrorVar = map[string]interface{}{
+				response.Error = "common.error.request.unmarshal_var"
+				response.ErrorVar = map[string]interface{}{
 					"f": e1.Field,
 					"e": e1.Type,
 					"v": e1.Value,
@@ -90,57 +90,60 @@ func ErrorHandler(err error, c echo.Context) {
 			}
 		}
 
-		if resp.Error == "" {
-			resp.Error = "common.error.request.bad"
+		if response.Error == "" {
+			response.Error = "common.error.request.bad"
 		}
 	case 401:
-		resp.Message = "common.error.request.default"
+		response.Message = "common.error.request.default"
 		reportMsg := report.Message.(string)
 		if reportMsg == "invalid or expired jwt" {
 			reportInternal := report.Internal.Error()
 			if reportInternal == "Token is expired" {
-				resp.Error = "common.error.request.jwt.expired"
+				response.Error = "common.error.request.jwt.expired"
 			} else {
-				resp.Error = "common.error.request.jwt.invalid"
+				response.Error = "common.error.request.jwt.invalid"
 			}
 		}
 
-		if resp.Error == "" {
-			resp.Error = "common.error.request.unauthorized"
+		if response.Error == "" {
+			response.Error = "common.error.request.unauthorized"
 		}
 	case 403:
-		resp.Message = "common.error.request.default"
-		resp.Error = "common.error.request.forbidden"
+		response.Message = "common.error.request.default"
+		response.Error = "common.error.request.forbidden"
 	case 404:
-		resp.Message = "common.error.request.default"
-		if resp.Error == "" {
-			resp.Error = "common.error.request.route.not_found"
+		response.Message = "common.error.request.default"
+		if response.Error == "" {
+			response.Error = "common.error.request.route.not_found"
 		}
 	case 405:
-		resp.Message = "common.error.request.default"
-		resp.Error = "common.error.request.method"
+		response.Message = "common.error.request.default"
+		response.Error = "common.error.request.method"
 	case 413:
-		resp.Message = "common.error.request.default"
-		resp.Error = "common.error.request.size.large"
+		response.Message = "common.error.request.default"
+		response.Error = "common.error.request.size.large"
 	case 415:
-		resp.Message = "common.error.request.default"
-		resp.Error = "common.error.request.media_type"
+		response.Message = "common.error.request.default"
+		response.Error = "common.error.request.media_type"
 	case 422:
-		resp.Message = "validation.error.default"
+		response.Message = "validation.error.default"
+	case 429:
+		response.Message = "common.error.request.default"
+		response.Error = "common.error.request.limit"
 	case 500:
-		resp.Message = "common.error.server.internal"
-		if resp.Error == "" {
-			resp.Error = "common.error.server.internal"
+		response.Message = "common.error.server.internal"
+		if response.Error == "" {
+			response.Error = "common.error.server.internal"
 		}
 	case 502:
-		resp.Message = "common.error.server.gateway"
-		resp.Error = "common.error.service.unreachable"
+		response.Message = "common.error.server.gateway"
+		response.Error = "common.error.service.unreachable"
 	}
 
-	ParseResponse(c, resp)
+	ParseResponse(c, response)
 }
 
 // ParseResponse - Parse return response in JSON format
-func ParseResponse(c echo.Context, resp *libresponse.Response) (err error) {
-	return c.JSON(resp.Code, resp)
+func ParseResponse(c echo.Context, response *libresponse.Response) (err error) {
+	return c.JSON(response.Code, response)
 }
