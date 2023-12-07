@@ -2,7 +2,6 @@ package libdb
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -115,7 +114,6 @@ func ListByField(d *sqlx.DB, list interface{}, conditionVal map[string]interface
 	t := new(ModelTotal)
 	_, err := Get(d, t, "SELECT COUNT("+fieldCount+") AS total FROM "+table+" WHERE 1=1 "+condition, conditionVal)
 	if err != nil {
-		fmt.Println(err)
 		return t.Total, err
 	}
 

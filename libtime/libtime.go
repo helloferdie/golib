@@ -93,6 +93,24 @@ func DateTimeFormat(input interface{}, tz string) interface{} {
 	return nil
 }
 
+// RFC3339Format - Return RFC3339 string or nil for sql.Nulltime
+func RFC3339Format(input interface{}, tz string) interface{} {
+	v, ok := input.(map[string]interface{})
+	if ok {
+		b, ok := v["Valid"].(bool)
+		if ok && b {
+			if s, ok := v["Time"].(string); ok {
+				t, err := time.Parse(time.RFC3339, s)
+				if err == nil {
+					loc, _ := time.LoadLocation(tz)
+					return t.In(loc).Format(time.RFC3339)
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // Based on https://github.com/bearbin/go-age
 
 // AgeAt - gets the age of an entity at a certain time.
