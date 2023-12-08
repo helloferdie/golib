@@ -67,3 +67,13 @@ func UniqueInt64(list []int64) []int64 {
 	}
 	return tmpList
 }
+
+// Insert - Insert at random index
+func Insert(a []interface{}, index int, value interface{}) []interface{} {
+	if len(a) <= index { // nil or empty slice or after last element
+		return append(a, value)
+	}
+	a = append(a[:index+1], a[index:]...) // index < len(a)
+	a[index] = value
+	return a
+}
