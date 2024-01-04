@@ -14,8 +14,8 @@ var (
 	regexChainTemplate = regexp.MustCompile(`^<T (.+)>$`) // Regex for detect chain template <T syntax>
 )
 
-// Translate
-func Translate(loc *i18n.Localizer, syntax string, data interface{}) string {
+// Translate return translated text with translation success status
+func Translate(loc *i18n.Localizer, syntax string, data interface{}) (string, bool) {
 	// Translate template data
 	templateData := translateTemplateData(loc, data)
 
@@ -25,15 +25,15 @@ func Translate(loc *i18n.Localizer, syntax string, data interface{}) string {
 		TemplateData: templateData,
 	})
 	if err != nil {
-		return fallbackTranslation(loc, syntax)
+		return fallbackTranslation(loc, syntax), false
 	}
 
 	// Check translated syntax is chained syntax <<SYNTAX>>
 	isChain, syntaxChain := checkSyntax(s, regexChainTemplate)
 	if isChain {
-		s = Translate(loc, syntaxChain, data)
+		return Translate(loc, syntaxChain, data)
 	}
-	return s
+	return s, true
 }
 
 // translateTemplateData provide translation if template data is given
@@ -57,7 +57,11 @@ func translateWithModifiers(loc *i18n.Localizer, text string) string {
 
 	txt := strings.Fields(s)
 	txtLen := len(txt)
-	localeTxt := Translate(loc, txt[0], nil)
+	localeTxt, success := Translate(loc, txt[0], nil)
+	if !success {
+		return localeTxt
+	}
+
 	switch {
 	case txtLen > 1 && txt[1] == "upper":
 		return strings.ToUpper(localeTxt)
