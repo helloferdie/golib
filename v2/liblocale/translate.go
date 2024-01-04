@@ -25,7 +25,7 @@ func Translate(loc *i18n.Localizer, syntax string, data interface{}) string {
 		TemplateData: templateData,
 	})
 	if err != nil {
-		return fallbackTranslation(loc, s)
+		return fallbackTranslation(loc, syntax)
 	}
 
 	// Check translated syntax is chained syntax <<SYNTAX>>
