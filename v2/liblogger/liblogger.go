@@ -2,6 +2,7 @@ package liblogger
 
 import (
 	"os"
+	"strconv"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -41,13 +42,23 @@ func loadConfig() {
 		cfg := zap.NewProductionEncoderConfig()
 		cfg.EncodeTime = zapcore.ISO8601TimeEncoder
 
+		// Custom encoder to skip lengthy stacktrace
+		customEncoder, _ := newCustomEncoder(cfg)
+
 		core := zapcore.NewCore(
-			zapcore.NewJSONEncoder(cfg),
+			//	zapcore.NewJSONEncoder(cfg), // Default JSON encoder
+			customEncoder, // Use custom encoder
 			zapcore.NewMultiWriteSyncer(ws...),
 			zap.InfoLevel,
 		)
 
-		logger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
+		// Load caller skip from .env
+		envCallerSkip, err := strconv.Atoi(os.Getenv("log_caller_skip"))
+		if err != nil || envCallerSkip < 0 {
+			envCallerSkip = 0
+		}
+
+		logger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel), zap.AddCallerSkip(envCallerSkip))
 		defer logger.Sync()
 
 		initialize = true
